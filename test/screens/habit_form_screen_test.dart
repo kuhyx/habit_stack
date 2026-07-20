@@ -33,6 +33,18 @@ void main() {
     archived: archived,
   );
 
+  /// The screen under a forced 24-hour locale.
+  ///
+  /// Without this the time picker opens in 12-hour mode, where the AM/PM
+  /// toggle defaults to the period of the *current wall-clock time*. Typing
+  /// "07" then yields 07:00 before noon but 19:00 after it, so these tests
+  /// passed every morning and failed every afternoon. Pinning the format
+  /// removes the ambiguity instead of guessing at the toggle.
+  Widget app() => const MediaQuery(
+    data: MediaQueryData(alwaysUse24HourFormat: true),
+    child: MaterialApp(home: HabitFormScreen()),
+  );
+
   /// Sets the time via the dialog's keyboard-entry mode (more robust in a
   /// widget test than dragging the analog dial).
   ///
@@ -60,7 +72,7 @@ void main() {
     (tester) async {
       await tester.runAsync(() async {
         await tester.pumpWidget(
-          const MaterialApp(home: HabitFormScreen()),
+          app(),
         );
         await settle(tester);
 
@@ -81,7 +93,7 @@ void main() {
     tester,
   ) async {
     await tester.runAsync(() async {
-      await tester.pumpWidget(const MaterialApp(home: HabitFormScreen()));
+      await tester.pumpWidget(app());
       await settle(tester);
 
       await tester.enterText(
@@ -109,7 +121,7 @@ void main() {
       tester,
     ) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(const MaterialApp(home: HabitFormScreen()));
+        await tester.pumpWidget(app());
         await settle(tester);
 
         Widget button() =>
@@ -141,7 +153,7 @@ void main() {
   ) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
-      await tester.pumpWidget(const MaterialApp(home: HabitFormScreen()));
+      await tester.pumpWidget(app());
       await settle(tester);
 
       await tester.enterText(
@@ -170,7 +182,7 @@ void main() {
       await HabitStorageService.instance.addHabit(
         habit(id: 'h2', archived: true),
       );
-      await tester.pumpWidget(const MaterialApp(home: HabitFormScreen()));
+      await tester.pumpWidget(app());
       await settle(tester);
 
       await tester.tap(find.text('None -- use time + location instead'));
@@ -186,15 +198,20 @@ void main() {
     tester,
   ) async {
     await tester.runAsync(() async {
+      // Same 24-hour pin as app(); this test needs its own navigator host so
+      // it can assert the screen pops, but the picker is just as ambiguous.
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => Scaffold(
-              body: FilledButton(
-                onPressed: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(builder: (_) => const HabitFormScreen()),
+        MediaQuery(
+          data: const MediaQueryData(alwaysUse24HourFormat: true),
+          child: MaterialApp(
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: FilledButton(
+                  onPressed: () => Navigator.of(context).push<void>(
+                    MaterialPageRoute(builder: (_) => const HabitFormScreen()),
+                  ),
+                  child: const Text('open'),
                 ),
-                child: const Text('open'),
               ),
             ),
           ),
