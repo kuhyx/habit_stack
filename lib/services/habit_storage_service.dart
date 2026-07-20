@@ -2,13 +2,12 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:habit_stack/models/completion.dart';
 import 'package:habit_stack/models/habit.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'package:habit_stack/services/document_store.dart';
+import 'package:habit_stack/services/document_store_factory.dart';
 
 /// Completions keyed by local date (`YYYY-MM-DD`) to the habit ids
 /// completed that day. Date-keyed, not habit-keyed, because the home
@@ -28,24 +27,23 @@ typedef CompletionsByDate = Map<String, Set<String>>;
 /// `LogStorageService`. No sync wiring exists yet -- see the
 /// `crdt-sync-migration` skill when that work starts.
 class HabitStorageService {
-  HabitStorageService._(this._habitsFile, this._completionsFile);
+  HabitStorageService._(this._store);
+
+  /// Document names within the store.
+  static const _habitsDoc = 'habits';
+  static const _completionsDoc = 'completions';
 
   static HabitStorageService? _instance;
 
   /// Returns the initialized singleton; throws if [init] was not called.
   static HabitStorageService get instance => _instance!;
 
-  final File _habitsFile;
-  final File _completionsFile;
+  final DocumentStore _store;
 
   /// Initializes the singleton, pointing at the app's documents directory.
   static Future<HabitStorageService> init() async {
     if (_instance != null) return _instance!;
-    final dir = await getApplicationDocumentsDirectory();
-    final svc = HabitStorageService._(
-      File(p.join(dir.path, 'habits.json')),
-      File(p.join(dir.path, 'completions.json')),
-    );
+    final svc = HabitStorageService._(await openDocumentStore());
     _instance = svc;
     return svc;
   }
@@ -55,26 +53,16 @@ class HabitStorageService {
   /// When [testDir] is given, subsequent reads/writes go there instead of
   /// the real documents directory.
   @visibleForTesting
-  static void resetForTesting({Directory? testDir}) {
-    _instance = testDir == null
-        ? null
-        : HabitStorageService._(
-            File(p.join(testDir.path, 'habits.json')),
-            File(p.join(testDir.path, 'completions.json')),
-          );
+  static void resetForTesting({DocumentStore? store}) {
+    _instance = store == null ? null : HabitStorageService._(store);
   }
 
   /// Reads every habit, including archived ones.
   ///
   /// Returns an empty list on a missing or unparsable file.
   Future<List<Habit>> readHabits() async {
-    if (!_habitsFile.existsSync()) return [];
-    String raw;
-    try {
-      raw = await _habitsFile.readAsString();
-    } on FileSystemException {
-      return [];
-    }
+    final raw = await _store.read(_habitsDoc);
+    if (raw == null) return [];
     Object? data;
     try {
       data = jsonDecode(raw);
@@ -94,11 +82,8 @@ class HabitStorageService {
   /// real one, mirroring diet_guard's `LogStorageService.writeLog`, so a
   /// concurrent reader never sees a half-written file.
   Future<void> writeHabits(List<Habit> habits) async {
-    await _habitsFile.parent.create(recursive: true);
     final encoded = habits.map((h) => h.toJson()).toList();
-    final tmp = File('${_habitsFile.path}.$pid.tmp');
-    await tmp.writeAsString(jsonEncode(encoded));
-    await tmp.rename(_habitsFile.path);
+    await _store.write(_habitsDoc, jsonEncode(encoded));
   }
 
   /// Adds [habit] to the stored habit list.
@@ -126,13 +111,8 @@ class HabitStorageService {
   ///
   /// Returns an empty map on a missing or unparsable file.
   Future<CompletionsByDate> readCompletions() async {
-    if (!_completionsFile.existsSync()) return {};
-    String raw;
-    try {
-      raw = await _completionsFile.readAsString();
-    } on FileSystemException {
-      return {};
-    }
+    final raw = await _store.read(_completionsDoc);
+    if (raw == null) return {};
     Object? data;
     try {
       data = jsonDecode(raw);
@@ -153,13 +133,10 @@ class HabitStorageService {
   /// Persists the full completions map, mirroring [writeHabits]'s atomic
   /// temp-file-then-rename pattern.
   Future<void> writeCompletions(CompletionsByDate completions) async {
-    await _completionsFile.parent.create(recursive: true);
     final encoded = <String, Object?>{
       for (final entry in completions.entries) entry.key: entry.value.toList(),
     };
-    final tmp = File('${_completionsFile.path}.$pid.tmp');
-    await tmp.writeAsString(jsonEncode(encoded));
-    await tmp.rename(_completionsFile.path);
+    await _store.write(_completionsDoc, jsonEncode(encoded));
   }
 
   /// Toggles whether [habitId] is marked done on [date] (`YYYY-MM-DD`).

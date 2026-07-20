@@ -6,19 +6,17 @@ import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/screens/habit_form_screen.dart';
 import 'package:habit_stack/screens/habit_list_screen.dart';
 import 'package:habit_stack/screens/streak_screen.dart';
+import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 
 void main() {
-  late Directory tempDir;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('habit_stack_screen_');
-    HabitStorageService.resetForTesting(testDir: tempDir);
+    HabitStorageService.resetForTesting(store: InMemoryDocumentStore());
   });
 
   tearDown(() async {
     HabitStorageService.resetForTesting();
-    await tempDir.delete(recursive: true);
   });
 
   // initState fires real dart:io reads as fire-and-forget Futures the frame

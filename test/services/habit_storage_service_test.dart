@@ -3,19 +3,20 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_stack/models/habit.dart';
+import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 
 void main() {
-  late Directory tempDir;
+
+  late InMemoryDocumentStore store;
 
   setUp(() async {
-    tempDir = await Directory.systemTemp.createTemp('habit_stack_test_');
-    HabitStorageService.resetForTesting(testDir: tempDir);
+    store = InMemoryDocumentStore();
+    HabitStorageService.resetForTesting(store: store);
   });
 
   tearDown(() async {
     HabitStorageService.resetForTesting();
-    await tempDir.delete(recursive: true);
   });
 
   Habit habit({String id = 'h1', String? anchorHabitId}) => Habit(
@@ -33,26 +34,15 @@ void main() {
     });
 
     test('returns an empty list for unparsable JSON', () async {
-      await File('${tempDir.path}/habits.json').writeAsString('not json');
+      await store.write('habits', 'not json');
       expect(await HabitStorageService.instance.readHabits(), isEmpty);
     });
 
     test('returns an empty list when the JSON root is not a list', () async {
-      await File('${tempDir.path}/habits.json').writeAsString('{}');
+      await store.write('habits', '{}');
       expect(await HabitStorageService.instance.readHabits(), isEmpty);
     });
 
-    test(
-      'returns an empty list when the file exists but is unreadable',
-      () async {
-        final file = File('${tempDir.path}/habits.json');
-        await file.writeAsString('[]');
-        await Process.run('chmod', ['000', file.path]);
-        addTearDown(() => Process.runSync('chmod', ['644', file.path]));
-        expect(await HabitStorageService.instance.readHabits(), isEmpty);
-      },
-      skip: Platform.isWindows ? 'chmod is POSIX-only' : false,
-    );
   });
 
   group('addHabit / writeHabits', () {
@@ -69,11 +59,6 @@ void main() {
       expect(habits.map((h) => h.id), ['h1', 'h2']);
     });
 
-    test('writeHabits does not leave a temp file behind', () async {
-      await HabitStorageService.instance.writeHabits([habit()]);
-      final entries = tempDir.listSync().map((e) => e.path);
-      expect(entries, everyElement(isNot(contains('.tmp'))));
-    });
   });
 
   group('archiveHabit', () {
@@ -110,35 +95,20 @@ void main() {
     });
 
     test('returns an empty map for unparsable JSON', () async {
-      await File(
-        '${tempDir.path}/completions.json',
-      ).writeAsString('not json');
+      await store.write('completions', 'not json');
       expect(await HabitStorageService.instance.readCompletions(), isEmpty);
     });
 
     test('returns an empty map when the JSON root is not a map', () async {
-      await File('${tempDir.path}/completions.json').writeAsString('[]');
+      await store.write('completions', '[]');
       expect(await HabitStorageService.instance.readCompletions(), isEmpty);
     });
 
     test('skips a date key whose value is not a list', () async {
-      await File(
-        '${tempDir.path}/completions.json',
-      ).writeAsString(jsonEncode({'2026-06-22': 'not a list'}));
+      await store.write('completions', jsonEncode({'2026-06-22': 'not a list'}));
       expect(await HabitStorageService.instance.readCompletions(), isEmpty);
     });
 
-    test(
-      'returns an empty map when the file exists but is unreadable',
-      () async {
-        final file = File('${tempDir.path}/completions.json');
-        await file.writeAsString('{}');
-        await Process.run('chmod', ['000', file.path]);
-        addTearDown(() => Process.runSync('chmod', ['644', file.path]));
-        expect(await HabitStorageService.instance.readCompletions(), isEmpty);
-      },
-      skip: Platform.isWindows ? 'chmod is POSIX-only' : false,
-    );
   });
 
   group('toggleCompletion', () {
