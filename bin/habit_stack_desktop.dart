@@ -18,7 +18,8 @@ Future<void> main(List<String> args) async {
   // `dart build cli` emits bundle/bin/<exe> alongside bundle/lib/, so the
   // installed layout puts the web assets one level up. --web-root overrides for
   // development runs straight out of the repo.
-  final webRoot = _argValue(args, '--web-root') ??
+  final webRoot =
+      _argValue(args, '--web-root') ??
       p.normalize(p.join(p.dirname(Platform.resolvedExecutable), '..', 'web'));
   if (!Directory(webRoot).existsSync()) {
     stderr.writeln('web assets not found at $webRoot');
@@ -26,7 +27,8 @@ Future<void> main(List<String> args) async {
   }
 
   // Overridable so a test run cannot point at the real habit data.
-  final dataDir = _argValue(args, '--data-dir') ??
+  final dataDir =
+      _argValue(args, '--data-dir') ??
       p.join(home, '.local', 'share', 'habit-stack-desktop');
 
   final server = WrapperServer(webRoot: webRoot, dataDir: dataDir);
@@ -68,8 +70,10 @@ Future<bool> _launchBrowser(String home) async {
     orElse: () => '',
   );
   if (browser.isEmpty) {
-    stderr.writeln('No Chrome-family browser found; open '
-        '$desktopWrapperOrigin manually.');
+    stderr.writeln(
+      'No Chrome-family browser found; open '
+      '$desktopWrapperOrigin manually.',
+    );
     return false;
   }
 

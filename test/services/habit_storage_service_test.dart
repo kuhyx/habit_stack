@@ -7,7 +7,6 @@ import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 
 void main() {
-
   late InMemoryDocumentStore store;
 
   setUp(() async {
@@ -42,7 +41,6 @@ void main() {
       await store.write('habits', '{}');
       expect(await HabitStorageService.instance.readHabits(), isEmpty);
     });
-
   });
 
   group('addHabit / writeHabits', () {
@@ -58,7 +56,6 @@ void main() {
       final habits = await HabitStorageService.instance.readHabits();
       expect(habits.map((h) => h.id), ['h1', 'h2']);
     });
-
   });
 
   group('archiveHabit', () {
@@ -105,10 +102,12 @@ void main() {
     });
 
     test('skips a date key whose value is not a list', () async {
-      await store.write('completions', jsonEncode({'2026-06-22': 'not a list'}));
+      await store.write(
+        'completions',
+        jsonEncode({'2026-06-22': 'not a list'}),
+      );
       expect(await HabitStorageService.instance.readCompletions(), isEmpty);
     });
-
   });
 
   group('toggleCompletion', () {

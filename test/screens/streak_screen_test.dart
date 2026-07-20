@@ -9,7 +9,6 @@ import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 
 void main() {
-
   setUp(() async {
     HabitStorageService.resetForTesting(store: InMemoryDocumentStore());
   });

@@ -14,7 +14,9 @@ void main() {
   setUp(() async {
     root = await Directory.systemTemp.createTemp('habit_wrapper');
     final webRoot = Directory(p.join(root.path, 'web'))..createSync();
-    File(p.join(webRoot.path, 'index.html')).writeAsStringSync('<h1>habits</h1>');
+    File(
+      p.join(webRoot.path, 'index.html'),
+    ).writeAsStringSync('<h1>habits</h1>');
     File(p.join(webRoot.path, 'main.dart.js')).writeAsStringSync('console;');
     File(p.join(webRoot.path, 'canvaskit.wasm')).writeAsStringSync('binary');
 
