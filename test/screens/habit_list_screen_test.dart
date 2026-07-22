@@ -8,6 +8,7 @@ import 'package:habit_stack/screens/habit_list_screen.dart';
 import 'package:habit_stack/screens/streak_screen.dart';
 import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
+import 'package:habit_stack/ui/theme.dart';
 
 void main() {
   setUp(() async {
@@ -38,7 +39,10 @@ void main() {
   testWidgets('shows an empty-state message with no habits', (tester) async {
     await tester.runAsync(() async {
       await tester.pumpWidget(
-        MaterialApp(home: HabitListScreen(key: UniqueKey())),
+        MaterialApp(
+          theme: buildLightTheme(),
+          home: HabitListScreen(key: UniqueKey()),
+        ),
       );
       await settle(tester);
 
@@ -49,7 +53,9 @@ void main() {
   testWidgets('lists a habit\'s rendered sentence', (tester) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       expect(
@@ -69,7 +75,9 @@ void main() {
       await HabitStorageService.instance.addHabit(
         habit(id: 'h2', anchorHabitId: 'a1'),
       );
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       expect(find.text('After meditate, I will meditate'), findsOneWidget);
@@ -81,7 +89,9 @@ void main() {
       await HabitStorageService.instance.addHabit(
         habit().copyWithArchived(),
       );
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       expect(find.text('No habits yet -- add one below.'), findsOneWidget);
@@ -93,7 +103,9 @@ void main() {
   ) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
@@ -108,7 +120,9 @@ void main() {
   testWidgets('tapping a done row again un-marks it', (tester) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       await tester.tap(find.byType(ListTile));
@@ -124,7 +138,9 @@ void main() {
     tester,
   ) async {
     await tester.runAsync(() async {
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       await tester.tap(find.widgetWithText(FloatingActionButton, 'New habit'));
@@ -139,7 +155,9 @@ void main() {
 
   testWidgets('the streaks icon navigates to StreakScreen', (tester) async {
     await tester.runAsync(() async {
-      await tester.pumpWidget(const MaterialApp(home: HabitListScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
       await settle(tester);
 
       await tester.tap(find.byIcon(Icons.local_fire_department));

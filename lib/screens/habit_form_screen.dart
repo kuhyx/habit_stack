@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
+import 'package:habit_stack/ui/theme.dart';
 import 'package:uuid/uuid.dart';
 
 /// Prompts for behavior, time, and location (or a habit-stacking anchor
@@ -123,7 +124,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('New habit')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -169,12 +170,13 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 onChanged: (_) => setState(() {}),
               ),
             ],
-            const SizedBox(height: 24),
+            // <= the 16px outer scroll padding above (rule 19).
+            const SizedBox(height: AppSpacing.md),
             Text(
               _previewSentence,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.md),
             FilledButton(
               onPressed: _canSave && !_saving ? _save : null,
               child: const Text('Save habit'),

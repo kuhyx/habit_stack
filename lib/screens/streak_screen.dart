@@ -9,6 +9,7 @@ import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/services/streak_service.dart';
+import 'package:habit_stack/ui/theme.dart';
 
 /// Days shown per habit in the recent-activity strip.
 const int _recentDayCount = 7;
@@ -110,12 +111,14 @@ class _DayCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final success = Theme.of(context).extension<AppStatusColors>()!.success;
     return Container(
       width: 20,
       height: 20,
       margin: const EdgeInsets.only(right: 4),
       decoration: BoxDecoration(
-        color: done ? Colors.green : Colors.grey.shade300,
+        color: done ? success : colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
       ),
     );

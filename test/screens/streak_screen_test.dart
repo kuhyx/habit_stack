@@ -7,6 +7,7 @@ import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/screens/streak_screen.dart';
 import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
+import 'package:habit_stack/ui/theme.dart';
 
 void main() {
   setUp(() async {
@@ -32,7 +33,9 @@ void main() {
 
   testWidgets('shows an empty-state message with no habits', (tester) async {
     await tester.runAsync(() async {
-      await tester.pumpWidget(const MaterialApp(home: StreakScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
+      );
       await settle(tester);
 
       expect(find.text('No habits yet.'), findsOneWidget);
@@ -44,7 +47,9 @@ void main() {
   ) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
-      await tester.pumpWidget(const MaterialApp(home: StreakScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
+      );
       await settle(tester);
 
       expect(find.text('meditate'), findsOneWidget);
@@ -66,7 +71,9 @@ void main() {
         'h1',
         localDateKey(today.subtract(const Duration(days: 1))),
       );
-      await tester.pumpWidget(const MaterialApp(home: StreakScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
+      );
       await settle(tester);
 
       expect(find.text('Streak: 2 days'), findsOneWidget);
@@ -80,7 +87,9 @@ void main() {
         'h1',
         localDateKey(DateTime.now()),
       );
-      await tester.pumpWidget(const MaterialApp(home: StreakScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
+      );
       await settle(tester);
 
       expect(find.text('Streak: 1 day'), findsOneWidget);
@@ -92,7 +101,9 @@ void main() {
       await HabitStorageService.instance.addHabit(
         habit().copyWithArchived(),
       );
-      await tester.pumpWidget(const MaterialApp(home: StreakScreen()));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
+      );
       await settle(tester);
 
       expect(find.text('No habits yet.'), findsOneWidget);

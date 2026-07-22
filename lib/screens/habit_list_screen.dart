@@ -9,6 +9,7 @@ import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/screens/habit_form_screen.dart';
 import 'package:habit_stack/screens/streak_screen.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
+import 'package:habit_stack/ui/theme.dart';
 
 /// Shows every non-archived habit's rendered sentence; tapping a row
 /// toggles whether it's done today. Idempotent, no confirmation dialog --
@@ -80,7 +81,11 @@ class _HabitListScreenState extends State<HabitListScreen> {
         title: const Text('Habit Stack'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.local_fire_department),
+            icon: Icon(
+              Icons.local_fire_department,
+              // Dimmed relative to the adjacent title text (rule 28).
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             tooltip: 'Streaks',
             onPressed: _openStreaks,
           ),
@@ -93,10 +98,16 @@ class _HabitListScreenState extends State<HabitListScreen> {
               itemBuilder: (context, index) {
                 final habit = _habits[index];
                 final done = _doneToday.contains(habit.id);
+                final colorScheme = Theme.of(context).colorScheme;
+                final success = Theme.of(
+                  context,
+                ).extension<AppStatusColors>()!.success;
                 return ListTile(
                   leading: Icon(
                     done ? Icons.check_circle : Icons.circle_outlined,
-                    color: done ? Colors.green : null,
+                    // Dimmed relative to the row's title text (rule 28).
+                    color: (done ? success : colorScheme.onSurfaceVariant)
+                        .withValues(alpha: 0.8),
                   ),
                   title: Text(renderSentence(habit, anchor: _anchorOf(habit))),
                   onTap: () => unawaited(_toggle(habit)),
