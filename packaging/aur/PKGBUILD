@@ -22,7 +22,7 @@ makedepends=('flutter')   # flutter-bin provides `flutter`; either satisfies thi
 # !debug because Flutter/Dart AOT release binaries carry no extractable DWARF.
 options=('!strip' '!debug')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('ea23cc68c718ad62d32c4537d6211641d1d005f6a5b8872564e7bcf575ca540f')
+sha256sums=('SKIP')  # placeholder: run updpkgsums in the AUR checkout after tagging
 
 _srcdir="habit_stack-$pkgver"
 
