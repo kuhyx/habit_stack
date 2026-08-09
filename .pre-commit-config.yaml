@@ -22,6 +22,15 @@ repos:
 
   - repo: local
     hooks:
+      # Every commit ships its own patch bump, so the release workflow's clean
+      # vX.Y.Z tag tracks HEAD instead of whatever version was last hand-edited.
+      - id: bump-patch-version
+        name: Bump patch version in pubspec.yaml
+        entry: bash scripts/bump_patch_version.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        require_serial: true
       - id: ci-mirror
         name: CI mirror (flutter clean, analyze, format check, test --coverage)
         entry: bash scripts/ci_mirror.sh
