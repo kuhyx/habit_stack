@@ -1,0 +1,90 @@
+# Maintainer: Krzysztof Rudnicki <krzysztofrudnicki0@gmail.com>
+pkgname=habit-stack
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Atomic Habits implementation-intentions app (Flutter web in a Chrome app window)'
+arch=('x86_64')
+url='https://github.com/kuhyx/habit_stack'
+license=('MIT')
+# A Chrome-family browser renders the UI, but none is a hard dependency: the
+# wrapper discovers whichever is installed at run time (Chrome, Chromium,
+# Thorium, Brave) and reports clearly if none is present. The deps below are
+# the ones actually linked/executed: the Dart AOT binary needs glibc,
+# /usr/bin/habit-stack is a bash script, and the icons are installed into the
+# hicolor theme hierarchy.
+depends=('glibc' 'bash' 'hicolor-icon-theme')
+optdepends=('google-chrome: renders the app window'
+            'chromium: renders the app window')
+makedepends=('flutter')   # flutter-bin provides `flutter`; either satisfies this
+# !strip is LOAD-BEARING: the wrapper is a Dart AOT executable with its snapshot
+# embedded in the ELF. Stripping discards the snapshot and the binary degrades
+# to a bare dartaotruntime that refuses to run ("is not an AOT snapshot").
+# !debug because Flutter/Dart AOT release binaries carry no extractable DWARF.
+options=('!strip' '!debug')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('ea23cc68c718ad62d32c4537d6211641d1d005f6a5b8872564e7bcf575ca540f')
+
+_srcdir="habit_stack-$pkgver"
+
+build() {
+  cd "$_srcdir"
+  # makepkg builds as an unprivileged user with no writable default pub cache;
+  # keep it inside $srcdir so the build is self-contained and leaves no trace.
+  export PUB_CACHE="$srcdir/.pub-cache"
+  flutter build web --release
+  # `dart build cli`, NOT `dart compile exe`: dependencies with native build
+  # hooks are something `dart compile` refuses to handle.
+  dart build cli -o build/cli
+}
+
+package() {
+  cd "$_srcdir"
+  local bundle="build/cli/bundle"
+
+  # Preserve the bundle's bin/ + lib/ layout: the executable resolves its
+  # native libraries from ../lib and the web assets from ../web.
+  install -dm755 "$pkgdir/opt/habit-stack"
+  cp -r "$bundle/bin" "$pkgdir/opt/habit-stack/bin"
+  # lib/ exists only when a dependency ships native code; this app has none,
+  # so the bundle is bin/-only and copying lib/ unconditionally would fail.
+  if [[ -d "$bundle/lib" ]]; then
+    cp -r "$bundle/lib" "$pkgdir/opt/habit-stack/lib"
+  fi
+  chmod 755 "$pkgdir/opt/habit-stack/bin/habit_stack_desktop"
+
+  install -dm755 "$pkgdir/opt/habit-stack/web"
+  cp -r build/web/. "$pkgdir/opt/habit-stack/web/"
+
+  install -dm755 "$pkgdir/usr/bin"
+  cat > "$pkgdir/usr/bin/habit-stack" <<'WRAPPER'
+#!/bin/bash
+exec /opt/habit-stack/bin/habit_stack_desktop "$@"
+WRAPPER
+  chmod 755 "$pkgdir/usr/bin/habit-stack"
+
+  # Desktop entry written inline. Do NOT call install_desktop_entry.sh: it
+  # targets ~/.local/share and its dev fallback points Exec at the repo's run.sh.
+  # StartupWMClass must match the WM class Chrome gets from the wrapper's
+  # --class flag, or the taskbar shows a second, unnamed window group.
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/habit_stack.desktop" <<'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Habit Stack
+Comment=Atomic Habits implementation intentions
+Exec=/usr/bin/habit-stack
+Icon=habit_stack
+Terminal=false
+Categories=Utility;
+StartupWMClass=habit_stack
+DESKTOP
+
+  local size
+  for size in 16 24 32 48 64 128 256 512; do
+    install -Dm644 "desktop/icons/$size/habit_stack.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/habit_stack.png"
+  done
+  # No gtk-update-icon-cache / update-desktop-database here: pacman hooks own
+  # that, and namcap flags calling them from package().
+
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
