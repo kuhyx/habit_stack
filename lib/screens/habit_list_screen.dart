@@ -67,10 +67,10 @@ class _HabitListScreenState extends State<HabitListScreen> {
   }
 
   void _openStreaks() {
-    unawaited(
-      Navigator.of(context).push<void>(
-        MaterialPageRoute(builder: (_) => const StreakScreen()),
-      ),
+    // No unawaited(): Navigator.push is annotated @awaitNotRequired, so
+    // wrapping it now trips unnecessary_unawaited.
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(builder: (_) => const StreakScreen()),
     );
   }
 
