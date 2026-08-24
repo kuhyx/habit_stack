@@ -78,3 +78,5 @@ A refactor without a gate silently regrows. Before this task is done:
 
 Run the repo's own suite, then run the program itself and confirm the
 behaviour is unchanged. Testing is the last step, never the first.
+
+REMOVE ME AFTER FINISH

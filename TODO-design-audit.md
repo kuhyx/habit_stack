@@ -100,3 +100,5 @@ logic, no hits).
   the only two points where the app diverges from single-source-of-truth
   theming — fixing both is a small, contained change (2 files, 3 call
   sites) once scoped as its own task.
+
+REMOVE ME AFTER FINISH
