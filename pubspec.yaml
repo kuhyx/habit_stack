@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.8+1
+version: 1.0.9+1
 
 environment:
   sdk: ^3.12.2
@@ -34,25 +34,25 @@ dependencies:
   crdt_sync:
     git:
       url: https://github.com/kuhyx/utils
-      ref: crdt_sync_dart-v0.3.0
+      ref: crdt_sync_dart-v0.11.1
       path: crdt_sync_dart
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: 1.0.9
 
   flutter:
     sdk: flutter
-  http: ^1.6.0
-  idb_shim: ^2.9.6+2
-  path: ^1.9.1
-  path_provider: ^2.1.5
-  uuid: ^4.5.3
+  http: 1.6.0
+  idb_shim: 2.9.8
+  path: 1.9.1
+  path_provider: 2.1.6
+  uuid: 4.6.0
 
 dev_dependencies:
   # Generates the Android launcher icons from assets/icon/ (see
   # python_pkg/app_icons in testsAndMisc for the shared style).
-  flutter_launcher_icons: ^0.14.4
+  flutter_launcher_icons: 0.14.4
 
   flutter_test:
     sdk: flutter
@@ -60,7 +60,7 @@ dev_dependencies:
   # Stricter than flutter_lints -- standardized across this ecosystem's
   # Flutter apps (see project memory: all Flutter apps use
   # very_good_analysis, not flutter_lints).
-  very_good_analysis: ^10.2.0
+  very_good_analysis: ^10.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

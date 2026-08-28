@@ -85,11 +85,11 @@ packages:
     dependency: "direct main"
     description:
       path: crdt_sync_dart
-      ref: "crdt_sync_dart-v0.3.0"
-      resolved-ref: "5480e723354c31e2a38dd2757d5d2c75a04e9618"
+      ref: "crdt_sync_dart-v0.11.1"
+      resolved-ref: "978d32af3af66f0d6500c4c6c0c6df5370ebe9a2"
       url: "https://github.com/kuhyx/utils"
     source: git
-    version: "0.3.0"
+    version: "0.11.1"
   crypto:
     dependency: transitive
     description:
@@ -176,10 +176,10 @@ packages:
     dependency: "direct main"
     description:
       name: idb_shim
-      sha256: "3448298f244bc76a14aca71461eeab6add2b8a877930521c42c2e8b71b644590"
+      sha256: e36a748165663a165e1f292e9d85af6e3aa087f6e2291d16f86b2035103b2950
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.6+2"
+    version: "2.9.8"
   image:
     dependency: transitive
     description:
