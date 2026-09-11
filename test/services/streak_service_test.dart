@@ -22,13 +22,10 @@ void main() {
       expect(currentStreak(dates, asOf: today), 1);
     });
 
-    test(
-      'today not yet marked does not break a streak through yesterday',
-      () {
-        final dates = {daysAgo(1), daysAgo(2), daysAgo(3)};
-        expect(currentStreak(dates, asOf: today), 3);
-      },
-    );
+    test('today not yet marked does not break a streak through yesterday', () {
+      final dates = {daysAgo(1), daysAgo(2), daysAgo(3)};
+      expect(currentStreak(dates, asOf: today), 3);
+    });
 
     test('neither today nor yesterday done is a zero streak', () {
       final dates = {daysAgo(2), daysAgo(3)};

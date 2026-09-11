@@ -98,9 +98,7 @@ void main() {
 
   testWidgets('archived habits are not listed', (tester) async {
     await tester.runAsync(() async {
-      await HabitStorageService.instance.addHabit(
-        habit().copyWithArchived(),
-      );
+      await HabitStorageService.instance.addHabit(habit().copyWithArchived());
       await tester.pumpWidget(
         MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
       );

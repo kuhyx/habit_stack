@@ -1,7 +1,7 @@
 # AUR packaging
 
 `PKGBUILD` here is the source of truth for the `habit-stack` AUR package. The
-AUR checkout (`~/aur/habit-stack`) is a copy of this file plus a generated
+AUR checkout (`~/sdk/aur/habit-stack`) is a copy of this file plus a generated
 `.SRCINFO`.
 
 ## Why the checksum can go stale
@@ -20,8 +20,8 @@ AUR checkout to fill in the real hash, and copy the result back here.
 git tag v1.2.3 && git push origin v1.2.3
 
 # 3. sync + checksum + build + verify
-cp packaging/aur/PKGBUILD ~/aur/habit-stack/PKGBUILD
-cd ~/aur/habit-stack
+cp packaging/aur/PKGBUILD ~/sdk/aur/habit-stack/PKGBUILD
+cd ~/sdk/aur/habit-stack
 # bump pkgver to match the tag, then:
 updpkgsums
 makepkg -Cf

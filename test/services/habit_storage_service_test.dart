@@ -155,10 +155,7 @@ void main() {
     });
 
     test('returns empty for a habit with no completions', () async {
-      expect(
-        await HabitStorageService.instance.completionsFor('h1'),
-        isEmpty,
-      );
+      expect(await HabitStorageService.instance.completionsFor('h1'), isEmpty);
     });
   });
 }

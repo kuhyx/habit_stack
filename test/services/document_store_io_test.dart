@@ -48,16 +48,12 @@ void main() {
     expect(entries, everyElement(isNot(contains('.tmp'))));
   });
 
-  test(
-    'read returns null when the file exists but is unreadable',
-    () async {
-      final file = File('${tempDir.path}/habits.json');
-      await file.writeAsString('[]');
-      await Process.run('chmod', ['000', file.path]);
-      addTearDown(() => Process.runSync('chmod', ['644', file.path]));
-      // Treated as absent rather than fatal, so the app still starts.
-      expect(await store.read('habits'), isNull);
-    },
-    skip: Platform.isWindows ? 'chmod is POSIX-only' : false,
-  );
+  test('read returns null when the file exists but is unreadable', () async {
+    final file = File('${tempDir.path}/habits.json');
+    await file.writeAsString('[]');
+    await Process.run('chmod', ['000', file.path]);
+    addTearDown(() => Process.runSync('chmod', ['644', file.path]));
+    // Treated as absent rather than fatal, so the app still starts.
+    expect(await store.read('habits'), isNull);
+  }, skip: Platform.isWindows ? 'chmod is POSIX-only' : false);
 }

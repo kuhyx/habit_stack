@@ -58,10 +58,7 @@ void main() {
       );
       await settle(tester);
 
-      expect(
-        find.text('I will meditate at 07:00 in bedroom'),
-        findsOneWidget,
-      );
+      expect(find.text('I will meditate at 07:00 in bedroom'), findsOneWidget);
     });
   });
 
@@ -86,9 +83,7 @@ void main() {
 
   testWidgets('archived habits are not listed', (tester) async {
     await tester.runAsync(() async {
-      await HabitStorageService.instance.addHabit(
-        habit().copyWithArchived(),
-      );
+      await HabitStorageService.instance.addHabit(habit().copyWithArchived());
       await tester.pumpWidget(
         MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
       );

@@ -64,10 +64,7 @@ void main() {
 
   group('renderSentence', () {
     test('standalone habit renders "I will X at T in L"', () {
-      expect(
-        renderSentence(make()),
-        'I will meditate at 07:00 in bedroom',
-      );
+      expect(renderSentence(make()), 'I will meditate at 07:00 in bedroom');
     });
 
     test('anchored habit renders "After Y, I will X" instead', () {

@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.10+1
+version: 1.0.12+1
 
 environment:
   sdk: ^3.12.2
@@ -44,7 +44,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: 1.6.0
-  idb_shim: 2.9.8
+  idb_shim: 2.9.9
   path: 1.9.1
   path_provider: 2.1.6
   uuid: 4.6.0
@@ -60,7 +60,7 @@ dev_dependencies:
   # Stricter than flutter_lints -- standardized across this ecosystem's
   # Flutter apps (see project memory: all Flutter apps use
   # very_good_analysis, not flutter_lints).
-  very_good_analysis: ^10.3.0
+  very_good_analysis: ^11.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -105,7 +105,7 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 # Launcher icon generation. Source art is produced by the shared generator:
-#   PYTHONPATH=~/testsAndMisc python3 -m python_pkg.app_icons generate --app habit_stack
+#   PYTHONPATH=~/src/testsAndMisc python3 -m python_pkg.app_icons generate --app habit_stack
 # then run: dart run flutter_launcher_icons
 flutter_launcher_icons:
   android: true

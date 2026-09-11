@@ -68,9 +68,7 @@ void main() {
     'typing a behavior live-renders the implementation-intention sentence',
     (tester) async {
       await tester.runAsync(() async {
-        await tester.pumpWidget(
-          app(),
-        );
+        await tester.pumpWidget(app());
         await settle(tester);
 
         expect(find.text('I will … at --:-- in …'), findsOneWidget);
@@ -105,18 +103,13 @@ void main() {
       );
       await settle(tester);
 
-      expect(
-        find.text('I will meditate at 07:00 in bedroom'),
-        findsOneWidget,
-      );
+      expect(find.text('I will meditate at 07:00 in bedroom'), findsOneWidget);
     });
   });
 
   testWidgets(
     'Save habit is disabled until behavior + time + location are set',
-    (
-      tester,
-    ) async {
+    (tester) async {
       await tester.runAsync(() async {
         await tester.pumpWidget(app());
         await settle(tester);
@@ -191,9 +184,7 @@ void main() {
     });
   });
 
-  testWidgets('saving persists the habit and pops the screen', (
-    tester,
-  ) async {
+  testWidgets('saving persists the habit and pops the screen', (tester) async {
     await tester.runAsync(() async {
       // Same 24-hour pin as app(); this test needs its own navigator host so
       // it can assert the screen pops, but the picker is just as ambiguous.

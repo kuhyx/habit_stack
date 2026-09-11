@@ -51,7 +51,7 @@ class WrapperServer {
   }
 
   /// Stops serving and releases the port.
-  Future<void> stop() async => _server?.close(force: true);
+  Future<void> stop() async => await _server?.close(force: true);
 
   Future<void> _serve(HttpServer server) async {
     await for (final request in server) {
@@ -74,9 +74,9 @@ class WrapperServer {
         request.response.statusCode = HttpStatus.badRequest;
         return;
       }
-      return _document(request, p.join(dataDir, '$name.json'));
+      return await _document(request, p.join(dataDir, '$name.json'));
     }
-    return _static(request, path);
+    return await _static(request, path);
   }
 
   /// GET returns the document (404 when absent); POST overwrites it.
