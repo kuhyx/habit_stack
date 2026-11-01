@@ -37,4 +37,15 @@ void main() {
       expect(currentStreak({}), 0);
     });
   });
+
+  test('completionDatesByHabit inverts date -> ids into id -> dates', () {
+    final byHabit = completionDatesByHabit({
+      '2026-06-21': {'a', 'b'},
+      '2026-06-22': {'a'},
+    });
+    expect(byHabit, {
+      'a': {'2026-06-21', '2026-06-22'},
+      'b': {'2026-06-21'},
+    });
+  });
 }

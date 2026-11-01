@@ -30,3 +30,17 @@ int currentStreak(Set<String> completionDates, {DateTime? asOf}) {
   }
   return streak;
 }
+
+/// Inverts a date-keyed completions map (`date -> habit ids`) into
+/// `habit id -> dates`, the shape [currentStreak] and the heatmap consume.
+Map<String, Set<String>> completionDatesByHabit(
+  Map<String, Set<String>> completionsByDate,
+) {
+  final byHabit = <String, Set<String>>{};
+  for (final entry in completionsByDate.entries) {
+    for (final habitId in entry.value) {
+      byHabit.putIfAbsent(habitId, () => {}).add(entry.key);
+    }
+  }
+  return byHabit;
+}

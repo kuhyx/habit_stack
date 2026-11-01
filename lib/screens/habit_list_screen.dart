@@ -3,17 +3,20 @@ library;
 
 import 'dart:async';
 
+import 'package:design_system/design_system.dart' show FitGrid;
 import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/screens/habit_form_screen.dart';
 import 'package:habit_stack/screens/streak_screen.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
+import 'package:habit_stack/services/streak_service.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:habit_stack/widgets/habit_tile.dart';
 
-/// Shows every non-archived habit's rendered sentence; tapping a row
-/// toggles whether it's done today. Idempotent, no confirmation dialog --
-/// matching the app's own "make it easy" premise.
+/// Shows every non-archived habit as a tile; tapping one toggles whether
+/// it's done today (idempotent, no confirmation dialog), long-press opens
+/// its actions. Overflow pages horizontally, so the screen never scrolls.
 class HabitListScreen extends StatefulWidget {
   /// Creates a [HabitListScreen].
   const HabitListScreen({super.key});
@@ -25,6 +28,7 @@ class HabitListScreen extends StatefulWidget {
 class _HabitListScreenState extends State<HabitListScreen> {
   List<Habit> _habits = const [];
   Set<String> _doneToday = const {};
+  Map<String, Set<String>> _datesByHabit = const {};
 
   @override
   void initState() {
@@ -39,6 +43,7 @@ class _HabitListScreenState extends State<HabitListScreen> {
     setState(() {
       _habits = habits.where((h) => !h.archived).toList();
       _doneToday = completions[localDateKey(DateTime.now())] ?? const {};
+      _datesByHabit = completionDatesByHabit(completions);
     });
   }
 
@@ -56,6 +61,22 @@ class _HabitListScreenState extends State<HabitListScreen> {
       habit.id,
       localDateKey(DateTime.now()),
     );
+    await _refresh();
+  }
+
+  Future<void> _showActions(Habit habit) async {
+    final archive = await showModalBottomSheet<bool>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: ListTile(
+          leading: const Icon(Icons.archive_outlined),
+          title: const Text('Archive habit'),
+          onTap: () => Navigator.of(context).pop(true),
+        ),
+      ),
+    );
+    if (archive != true) return;
+    await HabitStorageService.instance.archiveHabit(habit.id);
     await _refresh();
   }
 
@@ -91,29 +112,33 @@ class _HabitListScreenState extends State<HabitListScreen> {
           ),
         ],
       ),
-      body: _habits.isEmpty
-          ? const Center(child: Text('No habits yet -- add one below.'))
-          : ListView.builder(
-              itemCount: _habits.length,
-              itemBuilder: (context, index) {
-                final habit = _habits[index];
-                final done = _doneToday.contains(habit.id);
-                final colorScheme = Theme.of(context).colorScheme;
-                final success = Theme.of(
-                  context,
-                ).extension<AppStatusColors>()!.success;
-                return ListTile(
-                  leading: Icon(
-                    done ? Icons.check_circle : Icons.circle_outlined,
-                    // Dimmed relative to the row's title text (rule 28).
-                    color: (done ? success : colorScheme.onSurfaceVariant)
-                        .withValues(alpha: 0.8),
-                  ),
-                  title: Text(renderSentence(habit, anchor: _anchorOf(habit))),
-                  onTap: () => unawaited(_toggle(habit)),
-                );
-              },
-            ),
+      body: SafeArea(
+        top: false,
+        child: _habits.isEmpty
+            ? const Center(child: Text('No habits yet -- add one below.'))
+            : FitGrid(
+                itemCount: _habits.length,
+                columns: 2,
+                minSquare: 0.7,
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.sm,
+                  AppSpacing.md,
+                  AppSpacing.xxl + AppSpacing.xl,
+                ),
+                itemBuilder: (context, index) {
+                  final habit = _habits[index];
+                  final dates = _datesByHabit[habit.id] ?? const <String>{};
+                  return HabitTile(
+                    sentence: renderSentence(habit, anchor: _anchorOf(habit)),
+                    done: _doneToday.contains(habit.id),
+                    streak: currentStreak(dates),
+                    onTap: () => unawaited(_toggle(habit)),
+                    onLongPress: () => unawaited(_showActions(habit)),
+                  );
+                },
+              ),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addHabit,
         icon: const Icon(Icons.add),

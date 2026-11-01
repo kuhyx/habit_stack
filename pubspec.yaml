@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.18+1
+version: 1.0.19+1
 
 environment:
   sdk: ^3.12.2
@@ -34,17 +34,25 @@ dependencies:
   crdt_sync:
     git:
       url: https://github.com/kuhyx/utils
-      ref: crdt_sync_dart-v0.11.1
+      ref: crdt_sync_dart-v0.11.2
       path: crdt_sync_dart
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: 2.0.0
 
+  # Shared FitGrid (paged grid that never scrolls vertically). Same tag as
+  # the other apps; import with `show FitGrid` -- this app keeps its own
+  # theme.dart tokens.
+  design_system:
+    git:
+      url: https://github.com/kuhyx/utils
+      ref: design_system-v0.3.0
+      path: design_system
   flutter:
     sdk: flutter
   http: 1.6.0
-  idb_shim: 2.9.10
+  idb_shim: 2.11.1
   path: 1.9.1
   path_provider: 2.1.6
   uuid: 4.6.0

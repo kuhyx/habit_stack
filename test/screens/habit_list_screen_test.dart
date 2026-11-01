@@ -9,6 +9,7 @@ import 'package:habit_stack/screens/streak_screen.dart';
 import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:habit_stack/widgets/habit_tile.dart';
 
 void main() {
   setUp(() async {
@@ -105,7 +106,7 @@ void main() {
 
       expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
 
-      await tester.tap(find.byType(ListTile));
+      await tester.tap(find.byType(HabitTile));
       await settle(tester);
 
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
@@ -120,9 +121,9 @@ void main() {
       );
       await settle(tester);
 
-      await tester.tap(find.byType(ListTile));
+      await tester.tap(find.byType(HabitTile));
       await settle(tester);
-      await tester.tap(find.byType(ListTile));
+      await tester.tap(find.byType(HabitTile));
       await settle(tester);
 
       expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
