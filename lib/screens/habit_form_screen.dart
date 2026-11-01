@@ -136,7 +136,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String?>(
               initialValue: _anchorHabitId,
               decoration: const InputDecoration(
@@ -155,7 +155,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
               onChanged: (value) => setState(() => _anchorHabitId = value),
             ),
             if (_anchorHabitId == null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               Tooltip(
                 message: 'Pick a time',
                 child: OutlinedButton(
@@ -163,7 +163,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                   child: Text(_timeText.isEmpty ? 'At...' : 'At $_timeText'),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               TextField(
                 controller: _locationController,
                 decoration: const InputDecoration(labelText: 'Location'),

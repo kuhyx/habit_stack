@@ -64,8 +64,8 @@ class _StreakScreenState extends State<StreakScreen> {
                 final streak = currentStreak(dates);
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,9 +74,9 @@ class _StreakScreenState extends State<StreakScreen> {
                         habit.behavior,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text('Streak: $streak day${streak == 1 ? '' : 's'}'),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Row(
                         children: [
                           for (
@@ -116,7 +116,7 @@ class _DayCell extends StatelessWidget {
     return Container(
       width: 20,
       height: 20,
-      margin: const EdgeInsets.only(right: 4),
+      margin: const EdgeInsets.only(right: AppSpacing.xs),
       decoration: BoxDecoration(
         color: done ? success : colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
