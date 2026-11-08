@@ -85,19 +85,19 @@ packages:
     dependency: "direct main"
     description:
       path: crdt_sync_dart
-      ref: "crdt_sync_dart-v0.11.2"
-      resolved-ref: "1b5515fd8b1192207896c409212483aeb09704ea"
+      ref: "crdt_sync_dart-v0.12.0"
+      resolved-ref: "59b33949e4a130bb76c77e7434ddf4bbf8cde3a3"
       url: "https://github.com/kuhyx/utils"
     source: git
-    version: "0.11.2"
+    version: "0.12.0"
   crypto:
     dependency: transitive
     description:
       name: crypto
-      sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
+      sha256: e3626ae6270383c9e3a549f34c9e4cd26c09ae6a9adaab2bf4737a00340efdc4
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.7"
+    version: "3.0.8"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -110,11 +110,11 @@ packages:
     dependency: "direct main"
     description:
       path: design_system
-      ref: "design_system-v0.3.0"
-      resolved-ref: b3c9611af212880301ca79ed21f909bc4640f81f
+      ref: "design_system-v0.3.1"
+      resolved-ref: "8dfc4fb55ff5f5091e34e118f3134138cc83b8a3"
       url: "https://github.com/kuhyx/utils"
     source: git
-    version: "0.3.0"
+    version: "0.3.1"
   fake_async:
     dependency: transitive
     description:
@@ -185,10 +185,10 @@ packages:
     dependency: "direct main"
     description:
       name: idb_shim
-      sha256: "923c92ef88569de4ec1b257b6a6d10360dc3407179f61d0c73329701a7d7b12e"
+      sha256: "60965b556624f7018ec26205283e32670bc78c6fe1388d4b90bdfe6b2311b87b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.1"
+    version: "2.11.2"
   image:
     dependency: transitive
     description:
@@ -401,10 +401,10 @@ packages:
     dependency: transitive
     description:
       name: sembast
-      sha256: a58b26925e23071cf0f4754d8449aabe829e9a9930a872fb18e6ae4c2c88e025
+      sha256: "35775a26edbdf0d891bab304929a712e103c9d9a6e2fb5ebbd8437bb3139615a"
       url: "https://pub.dev"
     source: hosted
-    version: "3.8.9+1"
+    version: "3.10.0"
   sky_engine:
     dependency: transitive
     description: flutter
