@@ -69,8 +69,11 @@ class _HabitListScreenState extends State<HabitListScreen> {
       context: context,
       builder: (context) => SafeArea(
         child: ListTile(
-          leading: const Icon(Icons.archive_outlined),
-          title: const Text('Archive habit'),
+          key: const Key('archiveTile'),
+          leading: const Icon(
+            Icons.archive_outlined,
+            semanticLabel: 'Archive habit',
+          ),
           onTap: () => Navigator.of(context).pop(true),
         ),
       ),
@@ -99,15 +102,15 @@ class _HabitListScreenState extends State<HabitListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Habit Stack'),
+        title: const SizedBox.shrink(),
         actions: [
           IconButton(
             icon: Icon(
               Icons.local_fire_department,
               // Dimmed relative to the adjacent title text (rule 28).
               color: Theme.of(context).colorScheme.onSurfaceVariant,
+              semanticLabel: 'Streaks',
             ),
-            tooltip: 'Streaks',
             onPressed: _openStreaks,
           ),
         ],
@@ -115,7 +118,13 @@ class _HabitListScreenState extends State<HabitListScreen> {
       body: SafeArea(
         top: false,
         child: _habits.isEmpty
-            ? const Center(child: Text('No habits yet -- add one below.'))
+            ? const Center(
+                child: Icon(
+                  Icons.add_circle_outline,
+                  size: 64,
+                  semanticLabel: 'No habits yet - add one below',
+                ),
+              )
             : FitGrid(
                 itemCount: _habits.length,
                 columns: 2,
@@ -130,7 +139,8 @@ class _HabitListScreenState extends State<HabitListScreen> {
                   final habit = _habits[index];
                   final dates = _datesByHabit[habit.id] ?? const <String>{};
                   return HabitTile(
-                    sentence: renderSentence(habit, anchor: _anchorOf(habit)),
+                    habit: habit,
+                    anchor: _anchorOf(habit),
                     done: _doneToday.contains(habit.id),
                     streak: currentStreak(dates),
                     onTap: () => unawaited(_toggle(habit)),
@@ -139,10 +149,9 @@ class _HabitListScreenState extends State<HabitListScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: _addHabit,
-        icon: const Icon(Icons.add),
-        label: const Text('New habit'),
+        child: const Icon(Icons.add, semanticLabel: 'New habit'),
       ),
     );
   }

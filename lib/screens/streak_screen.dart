@@ -45,11 +45,17 @@ class _StreakScreenState extends State<StreakScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Streaks')),
+      appBar: AppBar(title: const SizedBox.shrink()),
       body: SafeArea(
         top: false,
         child: _habits.isEmpty
-            ? const Center(child: Text('No habits yet.'))
+            ? const Center(
+                child: Icon(
+                  Icons.local_fire_department_outlined,
+                  size: 64,
+                  semanticLabel: 'No habits yet',
+                ),
+              )
             : FitGrid(
                 itemCount: _habits.length,
                 columns: 2,
@@ -89,9 +95,10 @@ class _StreakTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final theme = Theme.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Padding(
@@ -103,9 +110,26 @@ class _StreakTile extends StatelessWidget {
               behavior,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleMedium,
             ),
-            Text('Streak: $streak day${streak == 1 ? '' : 's'}'),
+            const SizedBox(height: AppSpacing.xs),
+            Row(
+              children: [
+                Icon(
+                  Icons.local_fire_department,
+                  size: 18,
+                  color: theme.colorScheme.primary,
+                  semanticLabel: 'Streak',
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  '$streak',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.xs),
             Expanded(
               child: MonthHeatmap(month: now, today: now, doneDates: dates),

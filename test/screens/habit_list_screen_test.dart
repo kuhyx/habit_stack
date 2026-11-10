@@ -37,7 +37,7 @@ void main() {
     anchorHabitId: anchorHabitId,
   );
 
-  testWidgets('shows an empty-state message with no habits', (tester) async {
+  testWidgets('shows an empty-state icon with no habits', (tester) async {
     await tester.runAsync(() async {
       await tester.pumpWidget(
         MaterialApp(
@@ -47,7 +47,7 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('No habits yet -- add one below.'), findsOneWidget);
+      expect(find.byIcon(Icons.add_circle_outline), findsOneWidget);
     });
   });
 
@@ -59,7 +59,9 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('I will meditate at 07:00 in bedroom'), findsOneWidget);
+      expect(find.text('meditate'), findsOneWidget);
+      expect(find.text('07:00'), findsOneWidget);
+      expect(find.text('bedroom'), findsOneWidget);
     });
   });
 
@@ -78,7 +80,9 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('After meditate, I will meditate'), findsOneWidget);
+      // The stacked tile draws anchor -> behavior; the plain tile has none.
+      expect(find.byIcon(Icons.arrow_downward), findsOneWidget);
+      expect(find.text('meditate'), findsNWidgets(3));
     });
   });
 
@@ -90,7 +94,7 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('No habits yet -- add one below.'), findsOneWidget);
+      expect(find.byIcon(Icons.add_circle_outline), findsOneWidget);
     });
   });
 
@@ -139,7 +143,7 @@ void main() {
       );
       await settle(tester);
 
-      await tester.tap(find.widgetWithText(FloatingActionButton, 'New habit'));
+      await tester.tap(find.byIcon(Icons.add));
       await settle(tester);
       expect(find.byType(HabitFormScreen), findsOneWidget);
 

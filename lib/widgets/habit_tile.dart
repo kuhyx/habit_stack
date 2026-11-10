@@ -1,10 +1,12 @@
-/// A habit as a tile: streak ring with done state, sentence, streak count.
+/// A habit as a tile: streak ring with done state, intention, streak count.
 library;
 
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:habit_stack/widgets/intention_line.dart';
 
 /// Streak length at which the ring is full.
 const int ringFullStreak = 7;
@@ -13,16 +15,20 @@ const int ringFullStreak = 7;
 class HabitTile extends StatelessWidget {
   /// Creates a tile for one habit.
   const HabitTile({
-    required this.sentence,
+    required this.habit,
     required this.done,
     required this.streak,
     required this.onTap,
     required this.onLongPress,
+    this.anchor,
     super.key,
   });
 
-  /// The rendered implementation-intention sentence.
-  final String sentence;
+  /// The habit shown.
+  final Habit habit;
+
+  /// The habit [habit] is stacked after, if any.
+  final Habit? anchor;
 
   /// Whether the habit is done today.
   final bool done;
@@ -77,16 +83,24 @@ class HabitTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      sentence,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Streak $streak',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                    IntentionLine(habit: habit, anchor: anchor, dense: true),
+                    const SizedBox(height: AppSpacing.xs),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.local_fire_department,
+                          size: 16,
+                          color: scheme.onSurfaceVariant,
+                          semanticLabel: 'Streak',
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          '$streak',
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

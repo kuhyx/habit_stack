@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_stack/models/habit.dart';
@@ -30,39 +31,26 @@ void main() {
     archived: archived,
   );
 
-  /// The screen under a forced 24-hour locale.
-  ///
-  /// Without this the time picker opens in 12-hour mode, where the AM/PM
-  /// toggle defaults to the period of the *current wall-clock time*. Typing
-  /// "07" then yields 07:00 before noon but 19:00 after it, so these tests
-  /// passed every morning and failed every afternoon. Pinning the format
-  /// removes the ambiguity instead of guessing at the toggle.
-  Widget app() => const MediaQuery(
-    data: MediaQueryData(alwaysUse24HourFormat: true),
-    child: MaterialApp(home: HabitFormScreen()),
-  );
+  /// The screen alone. The time wheel is always 24-hour, so no locale pin
+  /// is needed (Material's picker defaulted AM/PM to the wall clock).
+  Widget app() => const MaterialApp(home: HabitFormScreen());
 
-  /// Sets the time via the dialog's keyboard-entry mode (more robust in a
-  /// widget test than dragging the analog dial).
-  ///
-  /// Scoped to [Dialog] descendants: the dialog's hour/minute
-  /// [TextFormField]s each build an internal [TextField], which would
-  /// otherwise collide by index with the form screen's own Behavior/
-  /// Location [TextField]s still mounted behind the dialog.
-  Future<void> pickTime(WidgetTester tester, String hour, String minute) async {
-    await tester.tap(find.text('At...'));
+  /// Sets the time through the text-free wheel sheet: drives the wheel's
+  /// callback directly (dragging wheels is brittle), then taps the check.
+  Future<void> pickTime(WidgetTester tester, int hour, int minute) async {
+    await tester.tap(find.byKey(const Key('timeButton')));
     await settle(tester);
-    await tester.tap(find.byIcon(Icons.keyboard_outlined));
-    await settle(tester);
-    final dialogFields = find.descendant(
-      of: find.byType(Dialog),
-      matching: find.byType(TextField),
-    );
-    await tester.enterText(dialogFields.at(0), hour);
-    await tester.enterText(dialogFields.at(1), minute);
-    await tester.tap(find.text('OK'));
+    tester
+        .widget<CupertinoDatePicker>(find.byKey(const Key('timeWheel')))
+        .onDateTimeChanged(DateTime(2000, 1, 1, hour, minute));
+    await tester.tap(find.byKey(const Key('timeConfirm')));
     await settle(tester);
   }
+
+  Finder inPreview(String text) => find.descendant(
+    of: find.byKey(const Key('preview')),
+    matching: find.text(text),
+  );
 
   testWidgets(
     'typing a behavior live-renders the implementation-intention sentence',
@@ -71,15 +59,21 @@ void main() {
         await tester.pumpWidget(app());
         await settle(tester);
 
-        expect(find.text('I will … at --:-- in …'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('preview')),
+            matching: find.byType(Text),
+          ),
+          findsNothing,
+        );
 
         await tester.enterText(
-          find.widgetWithText(TextField, 'Behavior'),
+          find.byKey(const Key('behaviorField')),
           'meditate',
         );
         await settle(tester);
 
-        expect(find.text('I will meditate at --:-- in …'), findsOneWidget);
+        expect(inPreview('meditate'), findsOneWidget);
       });
     },
   );
@@ -92,18 +86,23 @@ void main() {
       await settle(tester);
 
       await tester.enterText(
-        find.widgetWithText(TextField, 'Behavior'),
+        find.byKey(const Key('behaviorField')),
         'meditate',
       );
       await settle(tester);
-      await pickTime(tester, '07', '00');
-      await tester.enterText(
-        find.widgetWithText(TextField, 'Location'),
-        'bedroom',
-      );
+      await pickTime(tester, 7, 0);
+      await tester.enterText(find.byKey(const Key('locationField')), 'bedroom');
       await settle(tester);
 
-      expect(find.text('I will meditate at 07:00 in bedroom'), findsOneWidget);
+      expect(inPreview('meditate'), findsOneWidget);
+      expect(inPreview('07:00'), findsOneWidget);
+      expect(inPreview('bedroom'), findsOneWidget);
+      final semantics = tester.ensureSemantics();
+      expect(
+        find.bySemanticsLabel('I will meditate at 07:00 in bedroom'),
+        findsOneWidget,
+      );
+      semantics.dispose();
     });
   });
 
@@ -114,22 +113,21 @@ void main() {
         await tester.pumpWidget(app());
         await settle(tester);
 
-        Widget button() =>
-            tester.widget(find.widgetWithText(FilledButton, 'Save habit'));
+        Widget button() => tester.widget(find.byKey(const Key('saveButton')));
         expect((button() as FilledButton).onPressed, isNull);
 
         await tester.enterText(
-          find.widgetWithText(TextField, 'Behavior'),
+          find.byKey(const Key('behaviorField')),
           'meditate',
         );
         await settle(tester);
         expect((button() as FilledButton).onPressed, isNull);
 
-        await pickTime(tester, '07', '00');
+        await pickTime(tester, 7, 0);
         expect((button() as FilledButton).onPressed, isNull);
 
         await tester.enterText(
-          find.widgetWithText(TextField, 'Location'),
+          find.byKey(const Key('locationField')),
           'bedroom',
         );
         await settle(tester);
@@ -146,22 +144,26 @@ void main() {
       await tester.pumpWidget(app());
       await settle(tester);
 
-      await tester.enterText(
-        find.widgetWithText(TextField, 'Behavior'),
-        'stretch',
-      );
+      await tester.enterText(find.byKey(const Key('behaviorField')), 'stretch');
       await settle(tester);
-      await tester.tap(find.text('None -- use time + location instead'));
+      await tester.tap(find.byKey(const Key('anchorPicker')));
       await settle(tester);
-      await tester.tap(find.text('wake up').last);
+      await tester.tap(find.text('wake up'));
       await settle(tester);
 
-      expect(find.widgetWithText(TextField, 'Location'), findsNothing);
-      expect(find.text('After wake up, I will stretch'), findsOneWidget);
+      expect(find.byKey(const Key('locationField')), findsNothing);
+      expect(inPreview('wake up'), findsOneWidget);
+      expect(inPreview('stretch'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('preview')),
+          matching: find.byIcon(Icons.arrow_forward),
+        ),
+        findsOneWidget,
+      );
 
       final button =
-          tester.widget(find.widgetWithText(FilledButton, 'Save habit'))
-              as FilledButton;
+          tester.widget(find.byKey(const Key('saveButton'))) as FilledButton;
       expect(button.onPressed, isNotNull);
     });
   });
@@ -175,7 +177,7 @@ void main() {
       await tester.pumpWidget(app());
       await settle(tester);
 
-      await tester.tap(find.text('None -- use time + location instead'));
+      await tester.tap(find.byKey(const Key('anchorPicker')));
       await settle(tester);
 
       // Only the one non-archived habit's behavior appears as a candidate
@@ -186,20 +188,16 @@ void main() {
 
   testWidgets('saving persists the habit and pops the screen', (tester) async {
     await tester.runAsync(() async {
-      // Same 24-hour pin as app(); this test needs its own navigator host so
-      // it can assert the screen pops, but the picker is just as ambiguous.
+      // Own navigator host so the test can assert the screen pops.
       await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(alwaysUse24HourFormat: true),
-          child: MaterialApp(
-            home: Builder(
-              builder: (context) => Scaffold(
-                body: FilledButton(
-                  onPressed: () => Navigator.of(context).push<void>(
-                    MaterialPageRoute(builder: (_) => const HabitFormScreen()),
-                  ),
-                  child: const Text('open'),
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: FilledButton(
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(builder: (_) => const HabitFormScreen()),
                 ),
+                child: const Text('open'),
               ),
             ),
           ),
@@ -210,18 +208,15 @@ void main() {
       await settle(tester);
 
       await tester.enterText(
-        find.widgetWithText(TextField, 'Behavior'),
+        find.byKey(const Key('behaviorField')),
         'meditate',
       );
       await settle(tester);
-      await pickTime(tester, '07', '00');
-      await tester.enterText(
-        find.widgetWithText(TextField, 'Location'),
-        'bedroom',
-      );
+      await pickTime(tester, 7, 0);
+      await tester.enterText(find.byKey(const Key('locationField')), 'bedroom');
       await settle(tester);
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Save habit'));
+      await tester.tap(find.byKey(const Key('saveButton')));
       await settle(tester);
 
       expect(find.byType(HabitFormScreen), findsNothing);

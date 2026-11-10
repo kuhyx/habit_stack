@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:habit_stack/widgets/intention_line.dart';
+import 'package:habit_stack/widgets/time_sheet.dart';
 import 'package:uuid/uuid.dart';
 
 /// Prompts for behavior, time, and location (or a habit-stacking anchor
@@ -73,27 +75,18 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
     return null;
   }
 
-  String get _previewSentence {
-    final draft = Habit(
-      id: _newHabitId,
-      behavior: _behaviorController.text.isEmpty
-          ? '…'
-          : _behaviorController.text,
-      time: _timeText.isEmpty ? '--:--' : _timeText,
-      location: _locationController.text.isEmpty
-          ? '…'
-          : _locationController.text,
-      createdAt: DateTime.now(),
-      anchorHabitId: _anchorHabitId,
-    );
-    return renderSentence(draft, anchor: _anchor);
-  }
+  /// The habit as typed so far, for the live [IntentionLine] preview.
+  Habit get _draft => Habit(
+    id: _newHabitId,
+    behavior: _behaviorController.text,
+    time: _timeText,
+    location: _locationController.text,
+    createdAt: DateTime.now(),
+    anchorHabitId: _anchorHabitId,
+  );
 
   Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _time ?? TimeOfDay.now(),
-    );
+    final picked = await showTimeSheet(context, _time ?? TimeOfDay.now());
     if (picked == null) return;
     setState(() => _time = picked);
   }
@@ -122,29 +115,36 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New habit')),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              key: const Key('behaviorField'),
               controller: _behaviorController,
               decoration: const InputDecoration(
-                labelText: 'Behavior',
-                helperText: '"I will..."',
+                prefixIcon: Icon(
+                  Icons.psychology_outlined,
+                  semanticLabel: 'Behavior',
+                ),
               ),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String?>(
+              key: const Key('anchorPicker'),
               initialValue: _anchorHabitId,
               decoration: const InputDecoration(
-                labelText: 'Stack after... (optional)',
+                prefixIcon: Icon(
+                  Icons.call_split_outlined,
+                  semanticLabel: 'Stack after',
+                ),
               ),
               items: [
                 const DropdownMenuItem<String?>(
-                  child: Text('None -- use time + location instead'),
+                  child: Icon(Icons.block_outlined, size: 18),
                 ),
                 for (final h in _anchorCandidates)
                   DropdownMenuItem<String?>(
@@ -156,30 +156,44 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
             ),
             if (_anchorHabitId == null) ...[
               const SizedBox(height: AppSpacing.md),
-              Tooltip(
-                message: 'Pick a time',
-                child: OutlinedButton(
-                  onPressed: _pickTime,
-                  child: Text(_timeText.isEmpty ? 'At...' : 'At $_timeText'),
-                ),
+              OutlinedButton(
+                key: const Key('timeButton'),
+                onPressed: _pickTime,
+                child: _timeText.isEmpty
+                    ? const Icon(
+                        Icons.access_time_outlined,
+                        semanticLabel: 'Pick a time',
+                      )
+                    : Text(_timeText),
               ),
               const SizedBox(height: AppSpacing.md),
               TextField(
+                key: const Key('locationField'),
                 controller: _locationController,
-                decoration: const InputDecoration(labelText: 'Location'),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.place_outlined,
+                    semanticLabel: 'Location',
+                  ),
+                ),
                 onChanged: (_) => setState(() {}),
               ),
             ],
             // <= the 16px outer scroll padding above (rule 19).
             const SizedBox(height: AppSpacing.md),
-            Text(
-              _previewSentence,
-              style: Theme.of(context).textTheme.titleMedium,
+            IntentionLine(
+              key: const Key('preview'),
+              habit: _draft,
+              anchor: _anchor,
             ),
             const SizedBox(height: AppSpacing.md),
             FilledButton(
+              key: const Key('saveButton'),
               onPressed: _canSave && !_saving ? _save : null,
-              child: const Text('Save habit'),
+              child: const Icon(
+                Icons.save_outlined,
+                semanticLabel: 'Save habit',
+              ),
             ),
           ],
         ),

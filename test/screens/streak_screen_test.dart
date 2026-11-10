@@ -31,14 +31,14 @@ void main() {
     createdAt: DateTime(2026, 1, 1),
   );
 
-  testWidgets('shows an empty-state message with no habits', (tester) async {
+  testWidgets('shows an empty-state icon with no habits', (tester) async {
     await tester.runAsync(() async {
       await tester.pumpWidget(
         MaterialApp(theme: buildLightTheme(), home: const StreakScreen()),
       );
       await settle(tester);
 
-      expect(find.text('No habits yet.'), findsOneWidget);
+      expect(find.byIcon(Icons.local_fire_department_outlined), findsOneWidget);
     });
   });
 
@@ -53,7 +53,7 @@ void main() {
       await settle(tester);
 
       expect(find.text('meditate'), findsOneWidget);
-      expect(find.text('Streak: 0 days'), findsOneWidget);
+      expect(find.text('0'), findsOneWidget);
     });
   });
 
@@ -76,11 +76,11 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('Streak: 2 days'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
     });
   });
 
-  testWidgets('a one-day streak uses singular "day"', (tester) async {
+  testWidgets('a one-day streak shows 1', (tester) async {
     await tester.runAsync(() async {
       await HabitStorageService.instance.addHabit(habit());
       await HabitStorageService.instance.toggleCompletion(
@@ -92,7 +92,7 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('Streak: 1 day'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget);
     });
   });
 
@@ -104,7 +104,7 @@ void main() {
       );
       await settle(tester);
 
-      expect(find.text('No habits yet.'), findsOneWidget);
+      expect(find.byIcon(Icons.local_fire_department_outlined), findsOneWidget);
     });
   });
 }

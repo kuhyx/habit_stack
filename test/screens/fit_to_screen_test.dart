@@ -69,10 +69,7 @@ void main() {
         await settle(tester);
 
         expectNoVerticalScroll(tester);
-        expect(
-          find.text('I will habit number 0 at 07:00 in bedroom').hitTestable(),
-          findsOneWidget,
-        );
+        expect(find.text('habit number 0').hitTestable(), findsOneWidget);
         expect(find.byType(FloatingActionButton).hitTestable(), findsOneWidget);
       });
     });
@@ -111,7 +108,7 @@ void main() {
   ) async {
     pixel6a(tester);
     await pumpList(tester, 30);
-    final last = find.text('I will habit number 29 at 07:00 in bedroom');
+    final last = find.text('habit number 29');
     expect(last.hitTestable(), findsNothing);
 
     var swipes = 0;
@@ -129,12 +126,12 @@ void main() {
   ) async {
     pixel6a(tester);
     await pumpList(tester, 2);
-    final first = find.text('I will habit number 0 at 07:00 in bedroom');
-    final second = find.text('I will habit number 1 at 07:00 in bedroom');
+    final first = find.text('habit number 0');
+    final second = find.text('habit number 1');
 
     await tester.longPress(second);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Archive habit'));
+    await tester.tap(find.byKey(const Key('archiveTile')));
     await tester.runAsync(() => settle(tester));
 
     expect(second, findsNothing);
