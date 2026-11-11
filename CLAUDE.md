@@ -6,3 +6,4 @@
 - lint: `flutter analyze`
 - coverage: `flutter test --reporter=compact --coverage`
 - coverage-gaps: `coverage-gaps coverage/lcov.info`
+- deploy: `git -C ~/src/habit_stack pull --ff-only && ~/.claude/scripts/phone_deploy.sh ~/src/habit_stack --release`
