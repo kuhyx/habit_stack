@@ -5,12 +5,13 @@ library;
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/intention_line.dart';
+import 'package:habit_stack/widgets/silent_back_button.dart';
 import 'package:habit_stack/widgets/time_sheet.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:uuid/uuid.dart';
 
 /// Prompts for behavior, time, and location (or a habit-stacking anchor
@@ -115,7 +116,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(leading: silentBackButton(context)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(

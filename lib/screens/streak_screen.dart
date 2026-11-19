@@ -5,12 +5,13 @@ library;
 import 'dart:async';
 
 import 'package:design_system/design_system.dart' show FitGrid;
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/services/streak_service.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/month_heatmap.dart';
+import 'package:habit_stack/widgets/silent_back_button.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Shows every non-archived habit as a streak + month-heatmap tile.
 class StreakScreen extends StatefulWidget {
@@ -45,7 +46,10 @@ class _StreakScreenState extends State<StreakScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const SizedBox.shrink()),
+      appBar: AppBar(
+        leading: silentBackButton(context),
+        title: const SizedBox.shrink(),
+      ),
       body: SafeArea(
         top: false,
         child: _habits.isEmpty

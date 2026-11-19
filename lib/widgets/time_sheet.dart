@@ -4,9 +4,9 @@
 /// "OK" labels are strings, not icons (textgate).
 library;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Opens the sheet at [initial]; returns the chosen time, or null when the
 /// sheet is dismissed without the check button.

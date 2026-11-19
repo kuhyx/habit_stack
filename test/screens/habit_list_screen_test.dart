@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/screens/habit_form_screen.dart';
@@ -147,7 +147,7 @@ void main() {
       await settle(tester);
       expect(find.byType(HabitFormScreen), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Back'));
+      await tester.tap(find.byKey(const Key('backButton')));
       await settle(tester);
       expect(find.byType(HabitListScreen), findsOneWidget);
     });

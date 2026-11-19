@@ -2,9 +2,9 @@
 /// words, with no template words around them (textgate).
 library;
 
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Shows `anchor -> behavior` for a stacked habit, otherwise
 /// `behavior, clock time, place location`. Empty fields show a dimmed icon

@@ -4,7 +4,6 @@ library;
 import 'dart:async';
 
 import 'package:design_system/design_system.dart' show FitGrid;
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/screens/habit_form_screen.dart';
@@ -13,6 +12,8 @@ import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/services/streak_service.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/habit_tile.dart';
+import 'package:habit_stack/widgets/silent_back_button.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Shows every non-archived habit as a tile; tapping one toggles whether
 /// it's done today (idempotent, no confirmation dialog), long-press opens
@@ -102,6 +103,7 @@ class _HabitListScreenState extends State<HabitListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: silentBackButton(context),
         title: const SizedBox.shrink(),
         actions: [
           IconButton(

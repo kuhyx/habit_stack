@@ -1,9 +1,9 @@
 /// Monday-first month grid; days after `today` are blank, not "missed".
 library;
 
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/local_date.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One cell per day of [month], filled when its date is in [doneDates].
 class MonthHeatmap extends StatelessWidget {

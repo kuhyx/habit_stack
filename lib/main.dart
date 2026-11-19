@@ -1,8 +1,8 @@
 // coverage:ignore-file
-import 'package:flutter/material.dart';
 import 'package:habit_stack/screens/habit_list_screen.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/ui/theme.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ class HabitStackApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Habit Stack',
+      // No title: on web it becomes the tab text (textgate).
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
       home: const HabitListScreen(),

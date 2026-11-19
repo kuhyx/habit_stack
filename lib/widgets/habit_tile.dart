@@ -3,10 +3,10 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:habit_stack/models/habit.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/intention_line.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Streak length at which the ring is full.
 const int ringFullStreak = 7;
