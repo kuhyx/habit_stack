@@ -29,8 +29,11 @@ main() {
     echo "==> dart format --set-exit-if-changed"
     dart format --set-exit-if-changed lib/ test/
 
-    echo "==> flutter test --coverage"
-    flutter test --coverage
+    # Two test isolates, not one per core: the default (16 here) peaked past
+    # the 4 GiB gate cap and was OOM-killed (2026-11-19). 13 test files run
+    # fine two at a time.
+    echo "==> flutter test --coverage --concurrency=2"
+    flutter test --coverage --concurrency=2
 
     echo "CI mirror passed."
 }
