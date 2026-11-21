@@ -13,6 +13,7 @@ import 'package:habit_stack/services/streak_service.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/habit_tile.dart';
 import 'package:habit_stack/widgets/silent_back_button.dart';
+import 'package:kuhy_credit/kuhy_credit.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Shows every non-archived habit as a tile; tapping one toggles whether
@@ -104,7 +105,7 @@ class _HabitListScreenState extends State<HabitListScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: silentBackButton(context),
-        title: const SizedBox.shrink(),
+        title: const KuhyCredit(size: 32, below: true, alignStart: true),
         actions: [
           IconButton(
             icon: Icon(

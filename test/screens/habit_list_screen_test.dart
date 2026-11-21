@@ -10,6 +10,7 @@ import 'package:habit_stack/services/document_store.dart';
 import 'package:habit_stack/services/habit_storage_service.dart';
 import 'package:habit_stack/ui/theme.dart';
 import 'package:habit_stack/widgets/habit_tile.dart';
+import 'package:kuhy_credit/kuhy_credit.dart';
 
 void main() {
   setUp(() async {
@@ -36,6 +37,17 @@ void main() {
     createdAt: DateTime(2026, 1, 1),
     anchorHabitId: anchorHabitId,
   );
+
+  testWidgets('renders KuhyCredit in the AppBar', (tester) async {
+    await tester.runAsync(() async {
+      await tester.pumpWidget(
+        MaterialApp(theme: buildLightTheme(), home: HabitListScreen()),
+      );
+      await settle(tester);
+
+      expect(find.byType(KuhyCredit), findsOneWidget);
+    });
+  });
 
   testWidgets('shows an empty-state icon with no habits', (tester) async {
     await tester.runAsync(() async {

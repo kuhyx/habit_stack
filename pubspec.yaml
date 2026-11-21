@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.34+1
+version: 1.0.35+1
 
 environment:
   sdk: ^3.12.2
@@ -56,6 +56,12 @@ dependencies:
     sdk: flutter
   http: 1.6.0
   idb_shim: 2.11.3
+  # Shared kuhy credit logo + tap-to-open panel to kuhy.duckdns.org.
+  kuhy_credit:
+    git:
+      url: https://github.com/kuhyx/utils
+      ref: kuhy-credit-v0.3.0
+      path: kuhy_credit/flutter
   # Flutter 3.50 deprecates package:flutter/material.dart; design_system's
   # FitGrid sits on material_ui, so the app must too or its widgets lose
   # MaterialLocalizations.
