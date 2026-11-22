@@ -108,6 +108,7 @@ class _HabitListScreenState extends State<HabitListScreen> {
         title: const KuhyCredit(size: 32, below: true, alignStart: true),
         actions: [
           IconButton(
+            tooltip: 'Streaks',
             icon: Icon(
               Icons.local_fire_department,
               // Dimmed relative to the adjacent title text (rule 28).

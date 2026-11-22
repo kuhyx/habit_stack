@@ -172,6 +172,8 @@ void main() {
       );
       await settle(tester);
 
+      expect(find.byTooltip('Streaks'), findsOneWidget);
+
       await tester.tap(find.byIcon(Icons.local_fire_department));
       await settle(tester);
 

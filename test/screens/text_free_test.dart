@@ -1,8 +1,9 @@
 /// Textgate guard: no screen paints a letter kuhy did not type.
 ///
 /// Walks every painted [RichText] (a [Text] builds one; icons are private-use
-/// codepoints and pass) and every [Tooltip] message, and fails on any Latin
-/// letter, even a single one, unless the whole string is seeded user content
+/// codepoints and pass) and every [Tooltip] message longer than one word (a
+/// one-word tip naming its icon is allowed since 2026-11-22), and fails on
+/// any Latin letter, even a single one, unless the whole string is seeded user content
 /// (a behavior or location). Each screen also has to paint at least a few
 /// strings, so a walk that finds nothing cannot pass by accident. Every case
 /// runs under the light and the dark theme, with and without habits, and
@@ -27,6 +28,10 @@ import 'package:habit_stack/ui/theme.dart';
 const Set<String> _content = {'meditate', 'bedroom', 'stretch'};
 
 final RegExp _letter = RegExp('[A-Za-z]');
+
+/// A tooltip that names its icon in one word (letters and hyphens, at most
+/// 20 characters) is allowed (kuhy's rule since 2026-11-22).
+final RegExp _oneWordTip = RegExp(r'^[A-Za-z][A-Za-z-]{0,19}$');
 
 /// Every painted string and tooltip that holds a letter and is not content.
 ///
@@ -55,7 +60,7 @@ List<String> _chromeWords(WidgetTester tester, {int minStrings = 1}) {
       (element.widget as Tooltip).message ??
           (element.widget as Tooltip).richMessage?.toPlainText() ??
           '',
-  ];
+  ].where((tip) => !_oneWordTip.hasMatch(tip));
   return [
     ...painted,
     ...tooltips,
@@ -217,6 +222,9 @@ void main() {
     // Self-test of the matcher itself, so loosening it shows up here.
     expect(_letter.hasMatch('x'), isTrue);
     expect(_letter.hasMatch('07:00 \u{e000}'), isFalse);
+    expect(_oneWordTip.hasMatch('Streaks'), isTrue);
+    expect(_oneWordTip.hasMatch('Two words'), isFalse);
+    expect(_oneWordTip.hasMatch('Streaks.'), isFalse);
   });
 
   testWidgets('app title, the web tab text, holds no letter', (tester) async {
